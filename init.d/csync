@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# description: sohu content sync tool
+#
+# processname: csync
+# chkconfig: 345 99 1
+
+# source function library
+. /etc/rc.d/init.d/functions
+
+case "$1" in
+    start)
+        echo -n "Starting csync: "
+        ulimit -n 65535 2>/dev/null 
+        daemon /opt/itc/csync/bin/csync -config /opt/itc/csync/etc/csync.conf
+        if ps aux|grep "csync -config"|grep -v grep >/dev/null 2>&1; then
+            touch /var/lock/subsys/csync
+        fi
+        echo
+        ;;
+    stop)
+        echo -n "Shutting down csync: "
+        #[ -f /var/run/csync/csync.pid ]
+        if [ -f /var/run/csync/csync.pid ]; then
+            kill -TERM `cat /var/run/csync/csync.pid`
+            RC=$?
+        else
+            if ps aux|grep "csync -config"|grep -v grep >/dev/null 2>&1; then
+                echo "/var/run/csync/csync.pid not exist  killall -9 csync ..."
+                killall -9 csync >/dev/null 2>/dev/null
+            fi
+            RC=0
+        fi
+        [ $RC -eq 0 ] && echo_success || echo_failure
+        sleep 1
+        rm -f /var/lock/subsys/csync
+        echo
+        ;;
+    restart)
+        $0 stop
+        sleep 3
+        $0 start
+        ;;
+    status)
+        if ps aux|grep "csync -config"|grep -v grep >/dev/null 2>&1; then
+            echo -n "csync is running..."
+            cat /var/run/csync/csync.pid
+            echo
+        else
+            echo "csync is stopped..."
+        fi
+        ;;
+    *)
+        echo "Usage: csync {start|stop|restart|status}"
+        exit 1
+esac
+
+exit 0

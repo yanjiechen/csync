@@ -1,0 +1,51 @@
+                         SOHU Content Sync Tool
+                         ======================
+
+运行: /opt/itc/csync/bin/csync -config /opt/itc/csync/etc/csync.conf
+参数说明:
+mode = [ client | server | promisc ]
+  client: 以client方式运行, 仅仅从服务器下载文件
+  server: 以server方式运行, 仅仅作为服务器, 为client提供同步服务, 必须指定listfile.
+  promisc: 以分中心方式运行, 既做client从server下载文件, 又可以为其它client提供服务.
+daemon = [ true | false ]
+  是否以daemon方式运行, 如果是true的话csync将转入后台.
+syncroot = [ path ]
+  一个本地路径, 指明频道内容所在的目录.
+logfile = [ path ]
+  记帐信息文件, 当logfile以|开头时，log信息将输到管道；
+  当logfile非|开头时，log信息将写入本地文件
+archdir = [ path ]
+  归档日志目录, 在server或者promisc模式下, 记录每一条同步命令.
+savefiledir = [ path ]
+  记录当前各频道的时戳文件, 当同步线程失败后被重起, 需要读取上次的同步时戳.
+archinterval = [ number ]
+  归档日志会自动切换, 每隔archinterval秒, 会切换一个日志. 最小为86400(1天).
+checkinterval = [ number ]
+  在client和promisc模式下, 表示每次去server检查是否有待更新文件的时间间隔.
+  在server模式下, 表示检查listfile的时间间隔. 单位是秒.
+timeout = [ number ]
+  传输超时时间间隔, 如果一个线程因为网络或互斥锁的缘故超过此时间间隔未接收
+  或发送数据, 该线程将会被杀掉并重新启动.
+listtype = [ cms | ftp ]
+  仅在server模式下, 表示listfile的类型, 如果用于CMS, 则用cms, 用于ftp, listfile
+  必须是标准的xferlog格式.
+listfile = [ path ]
+  同步列表文件, 仅在server模式下, csync会从中获得需要同步的文件列表.
+switchfile = [ path ]
+  切换列表文件, 仅在server模式下, 当cms系统切换同步列表文件时csync会从中获得需要同步的文件列表
+serveraddress = [[频道名#transfermode#shellcommand#shellremove#shellsymbol@[主机名:端口]] ...]
+  仅在client和promisc模式下, 指定需要同步的频道以及同步服务器的地址和端口.
+  可以指定多个, 用空格或逗号分隔. 如it@[192.168.0.1:65530]表示去192.168.0.1
+  的65530端口同步it频道.
+  transfermode指定传输模式，shellcommand指定'+'命令调用的脚本(shell模式下),
+  shellremove指定'-'命令调用的脚本(shell模式下),shellsymbol指定'*'命令调用的脚本(shell模式下)
+  transfermode = [ csync | shell | compatible ]
+    compatible: 与旧版本的csync server之间传输数据
+    csync: 使用csync传输文件
+    shell: 调用shell脚本传输文件
+    注意：csync/shell模式下的client只能和新版的csync server(1.2.2或以上)之间传输数据
+rsyncroot = [ path ]
+  rsync同步路径，'-'命令时同时删除rsyncroot下对应频道的对应文件
+preservetimes = [ yes | on | true | other ]
+  保留同步文件时间戳，以指令时间戳为准，preservetimes=yes|on|true时
+  开关打开

@@ -1,0 +1,17 @@
+mode = promisc
+daemon = true
+userid = csync
+groupid = csync
+bindport = 65530
+timeout = 60
+checkinterval = 3
+archinterval = 86400
+maxqueuesize = 1000
+syncroot = /opt/www
+archdir = /opt/itc/csync/arc
+savefiledir = /opt/itc/csync/run
+pidfile = /var/run/csync/csync.pid
+logfile = /opt/itc/csync/log/csync.log
+
+serveraddress = \
+it@[csync1:65530|csync2:65530]

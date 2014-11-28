@@ -1,0 +1,9 @@
+/opt/itc/csync/log/csync.log {
+    rotate 9
+    missingok
+    size=100M
+    create 0644
+    postrotate
+        /bin/kill -HUP `cat /var/run/csync/csync.pid 2> /dev/null` 2> /dev/null || true
+    endscript
+}
